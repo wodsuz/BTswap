@@ -1,0 +1,88 @@
+/*@import url("https://fonts.googleapis.com/css?family=Barlow|Poppins|Inter|Arial|Outfit:wght@500&display=swap");*/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .only-mobile {
+        @apply lg:hidden;
+    }
+
+    .non-mobile {
+        @apply hidden lg:block;
+    }
+}
+
+*::-webkit-scrollbar {
+    width: 8px;
+    background: #2B2D42;
+}
+
+*::-webkit-scrollbar-thumb {
+    width: 8px;
+    background: #EF233C;
+    -webkit-border-radius: 9px;
+    -moz-border-radius: 9px;
+    border-radius: 9px;
+}
+
+#nprogress .bar {
+
+    background: #EF233C !important;
+}
+
+#nprogress .spinner-icon {
+    border-top-color: #EF233C !important;
+    border-left-color: #EF233C !important;
+}
+
+#nprogress .peg {
+    box-shadow: 0 0 10px #EF233C, 0 0 5px #EF233C !important;
+}
+
+.input:focus, .input:focus-within {
+    box-shadow: unset !important;
+    border-color: transparent !important;
+    outline-offset: unset !important;
+    outline: unset !important;
+}
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+
+/*// swiper styles //*/
+
+.swiper {
+    width: 100%;
+}
+
+.swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    /* Center slide text vertically */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-position: center;
+    background-size: 100% 100%;
+}
+
+.swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.swiper-pagination-bullet-active{
+    background: #EF233C !important;
+}
