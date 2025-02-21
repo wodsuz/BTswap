@@ -1,31 +1,30 @@
 import Layout from "@/layouts/BaseLayout";
 import HomeView from "@/views/home/HomeView";
 import dynamic from "next/dynamic";
-import {NextPage} from "next";
-import {IToken} from "@/interfaces/IToken";
-import Cookies from 'js-cookie';
-import {fetchGitHubTokens} from "@/utils/fetchGitHubTokens";
+import { NextPage } from "next";
+import { IToken } from "@/interfaces/IToken";
+import Cookies from "js-cookie";
+import { fetchGitHubTokens } from "@/utils/fetchGitHubTokens";
 
-const WelcomeModal = dynamic(() => import('@/views/home/components/modals/WelcomeModal'));
+const WelcomeModal = dynamic(
+  () => import("@/views/home/components/modals/WelcomeModal")
+);
 
 interface HomeProps {
-    contractAddress: string;
-    tokenData: IToken;
+  contractAddress: string;
+  tokenData: IToken;
 }
 
-const Home: NextPage<HomeProps> = ({contractAddress, tokenData}) => {
-    const tokenDataFromCookies = Cookies.get('Set-Cookie');
-    console.log("cookie" + tokenDataFromCookies)
-    return (
-        <Layout title="Swap">
-            <WelcomeModal/>
-            <HomeView
-                tokenData={tokenData}
-                contractAddress={contractAddress}
-            />
-        </Layout>
-    );
-}
+const Home: NextPage<HomeProps> = ({ contractAddress, tokenData }) => {
+  const tokenDataFromCookies = Cookies.get("Set-Cookie");
+  console.log("cookie" + tokenDataFromCookies);
+  return (
+    <Layout title="Swap">
+      <WelcomeModal />
+      <HomeView tokenData={tokenData} contractAddress={contractAddress} />
+    </Layout>
+  );
+};
 
 // export async function getServerSideProps({req , res} : any) {
 //     try {
@@ -79,38 +78,32 @@ const Home: NextPage<HomeProps> = ({contractAddress, tokenData}) => {
 
 export default Home;
 
-export async function getServerSideProps({req, res}: any) {
-    const tokenDataFromCookies = res.getHeader("tokenData")
-    let tokenData;
-            if (tokenDataFromCookies) {
-            // If token exists in cookies, use it
-            const tokenData = JSON.parse(tokenDataFromCookies) as IToken;
+export async function getServerSideProps({ req, res }: any) {
+  const tokenDataFromCookies = res.getHeader("tokenData");
+  let tokenData;
+  if (tokenDataFromCookies) {
+    // If token exists in cookies, use it
+    const tokenData = JSON.parse(tokenDataFromCookies) as IToken;
 
-            return {
-                props: {
-                    tokenData,
-                    contractAddress: process.env.BTC_CONTRACT_ADDRESS,
-                },
-            };
-        }
-    else{
-        try {
-            const { tokens } = await fetchGitHubTokens();
-            const response = await fetch(tokens[0].download_url);
-            tokenData = await response.json();
-            res.setHeader('Set-Cookie', `tokenData=${tokenData}; Path=/`);
-        }catch (e){
+    return {
+      props: {
+        tokenData,
+        contractAddress: process.env.BTC_CONTRACT_ADDRESS,
+      },
+    };
+  } else {
+    try {
+      const { tokens } = await fetchGitHubTokens();
+      const response = await fetch(tokens[0].download_url);
+      tokenData = await response.json();
+      res.setHeader("Set-Cookie", `tokenData=${tokenData}; Path=/`);
+    } catch (e) {}
+  }
 
-        }
-    }
-
-
-
-
-        return {
-            props: {
-                tokenData,
-                contractAddress: process.env.BTC_CONTRACT_ADDRESS,
-            },
-        };
+  return {
+    props: {
+      tokenData,
+      contractAddress: process.env.BTC_CONTRACT_ADDRESS,
+    },
+  };
 }
