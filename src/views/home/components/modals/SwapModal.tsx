@@ -10,7 +10,6 @@ interface SwapModalProps {
   tokenB: { symbol: string; logoURI: string; amount: bigint };
   rate: number | null;
   slippage: number;
-  confirmSwap: () => Promise<string>; // Function returns transaction hash
 }
 
 const SwapModal: React.FC<SwapModalProps> = ({

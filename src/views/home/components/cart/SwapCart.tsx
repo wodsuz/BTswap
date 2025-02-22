@@ -394,7 +394,7 @@ function SwapCart(props: ISwapCart) {
       <div className="flex items-center justify-between w-full">
         <h4 className="text-xl font-bold text-white">Swap</h4>
         <figure className="flex">
-          <button className="p-0 bg-transparent border-0 btn hover:bg-transparent ">
+          <div className="p-0 bg-transparent border-0 btn hover:bg-transparent ">
             <label htmlFor="setting-modal">
               <ImageImporter
                 w={20}
@@ -404,7 +404,7 @@ function SwapCart(props: ISwapCart) {
                 alt={"setting-button"}
               />
             </label>
-          </button>
+          </div>
           <SettingModal
             tolerance={tolerance}
             setTolerance={setTolerance}
@@ -444,6 +444,7 @@ function SwapCart(props: ISwapCart) {
         </div>
         <div className="flex flex-wrap justify-between w-full p-2 bg-custom-cart rounded-xl ">
           <input
+            aria-label="Swap range"
             onChange={(e) => setRangeValue(Number(e?.target.value))}
             type="range"
             min={0}
@@ -480,6 +481,7 @@ function SwapCart(props: ISwapCart) {
           </div>
           <div className="flex items-center justify-between w-full p-2">
             <input
+              aria-label="Swap amount"
               className="w-1/2 p-2 text-xl bg-transparent input"
               value={Number(formatEther(amountA)).toFixed(10)}
               onChange={(e) => updateInput(e)}
@@ -514,6 +516,8 @@ function SwapCart(props: ISwapCart) {
       </div>
       <div className="relative flex items-center justify-center w-full">
         <button
+          title="Swap Tokens"
+          type="button"
           onClick={changeOrder}
           className="absolute duration-100 active:scale-90 "
         >
@@ -694,7 +698,6 @@ function SwapCart(props: ISwapCart) {
           }}
           rate={swapRate}
           slippage={slippage}
-          confirmSwap={confirmSwap}
         />
       </div>
     </div>
