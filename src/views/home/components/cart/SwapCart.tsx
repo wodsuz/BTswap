@@ -467,7 +467,7 @@ function SwapCart(props: ISwapCart) {
         </div>
         <div className="flex flex-wrap w-full mt-5 bg-custom-cart rounded-xl">
           <div className="flex justify-between w-full p-2 ">
-            <figure className="flex ">
+            <figure className="flex">
               <ImageImporter
                 w={20}
                 h={20}
