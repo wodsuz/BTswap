@@ -92,7 +92,9 @@ function SwapCart(props: ISwapCart) {
   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [swapRate, setSwapRate] = useState<number | null>(null);
+  const [swapRate, setSwapRate] = useState<number | null>(0.00005869); // Simulated rate
+  const [slippage, setSlippage] = useState(12); // Slippage percentage
+
   const confirmSwap = () => {
     console.log("Swap Confirmed");
     setIsModalOpen(false);
@@ -673,10 +675,7 @@ function SwapCart(props: ISwapCart) {
         <button
           type="button"
           className="w-full btn bg-custom-red"
-          onClick={() => {
-            setIsModalOpen(true);
-            setSwapRate(0.99);
-          }}
+          onClick={() => setIsModalOpen(true)}
         >
           Swap
         </button>
@@ -694,6 +693,7 @@ function SwapCart(props: ISwapCart) {
             amount: amountB,
           }}
           rate={swapRate}
+          slippage={slippage}
           confirmSwap={confirmSwap}
         />
       </div>
