@@ -5,13 +5,7 @@ import dynamic from "next/dynamic";
 import { IToken, Token } from "@/interfaces/IToken";
 import { ChangeEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import {
-  erc20,
-  pair,
-  swapPairFactory,
-  swapRouter,
-  weth,
-} from "@/lib/ContractFunctions";
+import { erc20, pair } from "@/lib/ContractFunctions";
 import { useBalance, usePublicClient, useWalletClient } from "wagmi";
 import { formatEther } from "viem";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
@@ -77,7 +71,7 @@ function SwapCart(props: ISwapCart) {
   const [balanceOfTokenA, setBalanceOfTokenA] = useState<bigint>(BigInt(0));
   const [balanceOfTokenB, setBalanceOfTokenB] = useState<bigint>(BigInt(0));
 
-  const [amountA, setAmountA] = useState<bigint>(BigInt(1000000000000000000));
+  const [amountA, setAmountA] = useState<bigint>(BigInt(0));
   const [amountB, setAmountB] = useState<bigint>(BigInt(0));
 
   const [pairAddress, setPairAddress] = useState<`0x${string}`>(
@@ -93,31 +87,9 @@ function SwapCart(props: ISwapCart) {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [swapRate, setSwapRate] = useState<number | null>(0.00005869); // Simulated rate
-  const [slippage, setSlippage] = useState(12); // Slippage percentage
-
-  const confirmSwap = () => {
-    console.log("Swap Confirmed");
-    setIsModalOpen(false);
-  };
 
   const token0 = erc20(publicClient, walletClient.data, tokenA.address);
   const token1 = erc20(publicClient, walletClient.data, tokenB.address);
-
-  const factory = swapPairFactory(
-    publicClient,
-    walletClient.data,
-    "0xDFE9d201CC5865b45024C799Be47D11Db2E326ad"
-  );
-  const router = swapRouter(
-    publicClient,
-    walletClient.data,
-    "0xb8C8A49b1dc525Dbde457c0a045b1316Ecd7aD9a"
-  );
-  const wETH = weth(
-    publicClient,
-    walletClient.data,
-    "0x041638a7D668Bb96121Eb0D7fF0C9241AB9d2f80"
-  );
 
   function getAmountOut(
     amountIn: bigint,
@@ -125,28 +97,18 @@ function SwapCart(props: ISwapCart) {
     reserveOut: bigint
   ): bigint {
     if (
-      (tokenA.address == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" &&
-        tokenB.address == "0x041638a7D668Bb96121Eb0D7fF0C9241AB9d2f80") ||
-      (tokenB.address == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" &&
-        tokenA.address == "0x041638a7D668Bb96121Eb0D7fF0C9241AB9d2f80")
+      Number(amountIn) <= 0 ||
+      Number(reserveIn) <= 0 ||
+      Number(reserveOut) <= 0
     ) {
-      return amountIn;
-    }
-
-    if (Number(amountIn) <= 0) {
       return BigInt(0);
     }
 
-    if (Number(reserveIn) <= 0 || Number(reserveOut) <= 0) {
-      return BigInt(0);
-    }
-
-    const amountInWithFee = Number(amountIn) * 9975;
+    const amountInWithFee = Number(amountIn) * 9975; // Apply 0.25% fee
     const numerator = amountInWithFee * Number(reserveOut);
     const denominator = Number(reserveIn) * 10000 + amountInWithFee;
-    const amountOut = BigInt(Math.floor(numerator / denominator));
 
-    return amountOut;
+    return BigInt(Math.floor(numerator / denominator)); // Return estimated amount
   }
 
   useEffect(() => {
@@ -254,8 +216,13 @@ function SwapCart(props: ISwapCart) {
   });
 
   useEffect(() => {
+    // Update amountA based on slider
     setAmountA((balanceOfTokenA * BigInt(rangeValue)) / BigInt(100));
-  }, [rangeValue, tokenA]);
+
+    if (swapRate) {
+      setAmountB(BigInt(Math.floor(Number(amountA) * swapRate * 100000)));
+    }
+  }, [rangeValue, amountA, swapRate]);
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -282,105 +249,13 @@ function SwapCart(props: ISwapCart) {
   }, [tokenA, tokenB, walletClient]);
 
   function updateInput(e: ChangeEvent<HTMLInputElement>) {
-    setAmountA(BigInt(Number(e.target.value) * 1000000000000000000));
-  }
+    const inputAmount = BigInt(Number(e.target.value) * 10 ** 18); // Convert to WEI
+    setAmountA(inputAmount);
 
-  async function swapTokens() {
-    if (
-      pairAddress == "0x0000000000000000000000000000000000000000" &&
-      tokenA.address != "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" &&
-      tokenB.address != "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" &&
-      tokenA.address != "0x041638a7D668Bb96121Eb0D7fF0C9241AB9d2f80" &&
-      tokenB.address != "0x041638a7D668Bb96121Eb0D7fF0C9241AB9d2f80"
-    ) {
-      toast.error("The pair does not exist.");
-    } else if (amountA <= balanceOfTokenA) {
-      if (tokenA.address == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
-        if (tokenB.address == "0x041638a7D668Bb96121Eb0D7fF0C9241AB9d2f80") {
-          try {
-            // @ts-ignore
-            let swapTransaction = wETH.write.deposit([], { value: amountA });
-          } catch (e) {
-            console.log(e);
-          }
-        } else {
-          try {
-            // @ts-ignore
-            let swapTransaction = router.write.swapETHForExactTokens(
-              [
-                (amountB * 999n) / 1000n,
-                ["0x041638a7D668Bb96121Eb0D7fF0C9241AB9d2f80", tokenB.address],
-                userAddress,
-                Date.now() + deadline * 60,
-              ],
-              { value: amountA }
-            );
-          } catch (e) {
-            console.log(e);
-          }
-        }
-      } else if (
-        tokenB.address == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-      ) {
-        if (tokenA.address == "0x041638a7D668Bb96121Eb0D7fF0C9241AB9d2f80") {
-          try {
-            // @ts-ignore
-            let swapTransaction = wETH.write.withdraw([amountA]);
-          } catch (e) {
-            console.log(e);
-          }
-        } else {
-          try {
-            let allowance = await token0.read.allowance([
-              userAddress,
-              "0xb8C8A49b1dc525Dbde457c0a045b1316Ecd7aD9a",
-            ]);
-            if (allowance < amountA) {
-              // @ts-ignore
-              let approveTransaction = token0.write.approve([
-                "0xb8C8A49b1dc525Dbde457c0a045b1316Ecd7aD9a",
-                amountA,
-              ]);
-            }
-
-            // @ts-ignore
-            let swapTransaction = router.write.swapTokensForExactETH([
-              (amountB * 999n) / 1000n,
-              amountA,
-              [tokenA.address, "0x041638a7D668Bb96121Eb0D7fF0C9241AB9d2f80"],
-              userAddress,
-              Date.now() + deadline * 60,
-            ]);
-          } catch (e) {
-            console.log(e);
-          }
-        }
-      } else {
-        try {
-          let allowance = await token0.read.allowance([
-            userAddress,
-            "0xb8C8A49b1dc525Dbde457c0a045b1316Ecd7aD9a",
-          ]);
-          if (allowance < amountA) {
-            // @ts-ignore
-            let approveTransaction = token0.write.approve([
-              "0xb8C8A49b1dc525Dbde457c0a045b1316Ecd7aD9a",
-              amountA,
-            ]);
-          }
-
-          // @ts-ignore
-          let swapTransaction = router.write.swapTokensForExactTokens([
-            (amountB * 999n) / 1000n,
-            amountA,
-            [tokenA.address, tokenB.address],
-            userAddress,
-            Date.now() + deadline * 60,
-          ]);
-        } catch (e) {
-          console.log(e);
-        }
-      }
+    if (swapRate) {
+      // Scale swapRate by 10^18, then divide after multiplication to maintain precision
+      const scaledSwapRate = BigInt(Math.floor(swapRate * 10 ** 18));
+      setAmountB(inputAmount * scaledSwapRate);
     }
   }
 
@@ -665,13 +540,6 @@ function SwapCart(props: ISwapCart) {
               <div className="text-gray-400">Routing source</div>
               <div>BaseSwap</div>
             </div>
-            {/*<div className="flex flex-wrap items-center justify-between w-full p-2 my-3 ">*/}
-            {/*    <button className="w-2/12 p-2 m-0 bg-transparent border rounded btn btn-outline"></button>*/}
-            {/*    <div className="w-3/12 border"></div>*/}
-            {/*    <button className="w-2/12 p-2 m-0 bg-transparent border rounded btn btn-outline"></button>*/}
-            {/*    <div className="w-3/12 border"></div>*/}
-            {/*    <button className="w-2/12 p-2 m-0 bg-transparent border rounded btn btn-outline"></button>*/}
-            {/*</div>*/}
           </div>
         )}
       </div>
@@ -697,7 +565,7 @@ function SwapCart(props: ISwapCart) {
             amount: amountB,
           }}
           rate={swapRate}
-          slippage={slippage}
+          slippage={2}
         />
       </div>
     </div>

@@ -23,13 +23,13 @@ const SwapModal: React.FC<SwapModalProps> = ({
   const [loadingRate, setLoadingRate] = useState(true);
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
-  const [isConfirming, setIsConfirming] = useState(false); // New state for animation
+  const [isConfirming, setIsConfirming] = useState(false);
 
   useEffect(() => {
     if (rate !== null) {
       setLoadingRate(false);
     } else {
-      setTimeout(() => setLoadingRate(false), 2000); // Simulated API delay
+      setTimeout(() => setLoadingRate(false), 2000);
     }
   }, [rate]);
 
@@ -37,21 +37,19 @@ const SwapModal: React.FC<SwapModalProps> = ({
 
   const expectedOutput = Number(tokenB.amount) / 1e18;
   const minReceived = expectedOutput * (1 - slippage / 100);
-  const priceImpact = "0%"; // Simulated price impact
-  const networkFee = "$2.72"; // Simulated fee
+  const priceImpact = "0.1%";
+  const networkFee = "<$0.99";
 
   const handleConfirmSwap = async () => {
-    setIsConfirming(true); // Start animation
+    setIsConfirming(true);
 
     try {
-      setTxHash("0x1234567890abcdef"); // Simulated transaction hash
+      setTxHash("0x1234567890abcdef");
 
-      // Stop animation, show confirmation message
       setTimeout(() => {
         setIsConfirming(false);
       }, 2000);
 
-      // Open Transaction Complete Modal
       setTimeout(() => {
         setIsTransactionModalOpen(true);
       }, 2000);
@@ -63,10 +61,8 @@ const SwapModal: React.FC<SwapModalProps> = ({
 
   return (
     <>
-      {/* SWAP MODAL */}
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
         <div className="bg-gray-900 text-white p-6 rounded-lg w-[600px] shadow-lg relative">
-          {/* Close Button */}
           <button
             type="button"
             className="absolute text-gray-400 top-3 right-4 hover:text-gray-200"
@@ -77,13 +73,11 @@ const SwapModal: React.FC<SwapModalProps> = ({
             <FaTimes size={22} />
           </button>
 
-          {/* Header */}
           <div className="flex items-center justify-between my-4">
             <h2 className="text-lg font-bold">Swap</h2>
             <span className="text-sm text-gray-400">Slippage: {slippage}%</span>
           </div>
 
-          {/* Token Swap Section */}
           <div className="p-4 mb-3 bg-gray-800 rounded-lg">
             <div className="flex justify-between">
               <div>
@@ -136,7 +130,6 @@ const SwapModal: React.FC<SwapModalProps> = ({
             </div>
           </div>
 
-          {/* Swap Details */}
           <div className="p-4 bg-gray-800 rounded-md">
             <div className="flex justify-between mb-2">
               <span className="text-gray-400">Expected Output</span>
@@ -160,7 +153,6 @@ const SwapModal: React.FC<SwapModalProps> = ({
             </div>
           </div>
 
-          {/* Confirming Transaction Animation */}
           {isConfirming && (
             <div className="flex flex-col items-center justify-center p-4 text-center">
               <FaSpinner className="text-4xl text-blue-500 animate-spin" />
@@ -170,7 +162,6 @@ const SwapModal: React.FC<SwapModalProps> = ({
             </div>
           )}
 
-          {/* Confirmation Message */}
           {txHash && !isConfirming && (
             <div className="flex flex-col items-center justify-center p-4 text-center">
               <FaCheckCircle className="text-4xl text-green-500" />
@@ -186,9 +177,9 @@ const SwapModal: React.FC<SwapModalProps> = ({
             </div>
           )}
 
-          {/* Confirm Button */}
           {!txHash && !isConfirming && (
             <button
+              type="button"
               className="w-full py-3 mt-4 text-lg font-bold text-white bg-blue-500 rounded hover:bg-blue-600"
               onClick={handleConfirmSwap}
               disabled={loadingRate}
@@ -201,7 +192,6 @@ const SwapModal: React.FC<SwapModalProps> = ({
         </div>
       </div>
 
-      {/* Transaction Complete Modal (Opens AFTER Swap Confirmation) */}
       <TransactionCompleteModal
         isOpen={isTransactionModalOpen}
         onClose={() => setIsTransactionModalOpen(false)}
