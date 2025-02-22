@@ -14,18 +14,19 @@ BTSwap is a cutting-edge decentralized exchange (DEX) built on the principles of
 ## 🛠️ Recent Changes
 
 💡 New Features & Improvements
-✅ Added conversion logic from ETH to BASE
-✅ Implemented Swap Modal for better UI/UX
-✅ Swap Modal now opens when Swap button is clicked
-✅ Added Swap animation for improved user experience
-✅ Implemented Swap Completed Transaction Modal
+
+- ✅ Added conversion logic from ETH to BASE
+- ✅ Implemented Swap Modal for better UI/UX
+- ✅ Swap Modal now opens when Swap button is clicked
+- ✅ Added Swap animation for improved user experience
+- ✅ Implemented Swap Completed Transaction Modal
 
 ## 🐞 Optimizations
 
-🛠 Fixed amountB not updating in the Swap Modal by introducing finalAmountA and finalAmountB state variables
-🛠 Updated Swap button click handler to store amountB before opening the modal
-🛠 Modified SwapModal props to use finalAmountA and finalAmountB instead of amountA and amountB
-🛠 Fixed BigInt conversion errors when multiplying with swapRate by scaling swapRate before BigInt conversion
-🛠 Improved slider and input synchronization by ensuring amountB updates dynamically when amountA changes
-🛠 Refactored getAmountOut function to prevent division errors and improve accuracy
-🛠 Cleaned the code for better readability and maintainability
+- 🛠 Fixed amountB not updating in the Swap Modal by introducing finalAmountA and finalAmountB state variables
+- 🛠 Updated Swap button click handler to store amountB before opening the modal
+- 🛠 Modified SwapModal props to use finalAmountA and finalAmountB instead of amountA and amountB
+- 🛠 Fixed BigInt conversion errors when multiplying with swapRate by scaling swapRate before BigInt conversion
+- 🛠 Improved slider and input synchronization by ensuring amountB updates dynamically when amountA changes
+- 🛠 Refactored getAmountOut function to prevent division errors and improve accuracy
+- 🛠 Cleaned the code for better readability and maintainability
