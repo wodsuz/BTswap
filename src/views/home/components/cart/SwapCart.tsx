@@ -671,6 +671,7 @@ function SwapCart(props: ISwapCart) {
       </div>
       <div className="flex w-full">
         <button
+          type="button"
           className="w-full btn bg-custom-red"
           onClick={() => {
             setIsModalOpen(true);

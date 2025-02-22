@@ -89,7 +89,7 @@ const SwapModal: React.FC<SwapModalProps> = ({
           </div>
           <div className="flex justify-between">
             <span className="text-gray-400">Fee</span>
-            <span>0.0001 {tokenA.symbol}</span>
+            <span>$ 0.99</span>
           </div>
         </div>
 
