@@ -17,6 +17,8 @@ import { formatEther } from "viem";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { setTokenAData, setTokenBData } from "@/store/actions/tokenChartAction";
 
+import SwapModal from "../modals/SwapModal";
+
 const SelectTokenModal = dynamic(
   () => import("@/components/extra/SelectTokenModal")
 );
@@ -88,6 +90,13 @@ function SwapCart(props: ISwapCart) {
   const [userAddress, setUserAddress] = useState<`0x${string}`>(
     "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
   );
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [swapRate, setSwapRate] = useState<number | null>(null);
+  const confirmSwap = () => {
+    console.log("Swap Confirmed");
+    setIsModalOpen(false);
+  };
 
   const token0 = erc20(publicClient, walletClient.data, tokenA.address);
   const token1 = erc20(publicClient, walletClient.data, tokenB.address);
@@ -663,10 +672,29 @@ function SwapCart(props: ISwapCart) {
       <div className="flex w-full">
         <button
           className="w-full btn bg-custom-red"
-          onClick={() => swapTokens()}
+          onClick={() => {
+            setIsModalOpen(true);
+            setSwapRate(0.99);
+          }}
         >
           Swap
         </button>
+        <SwapModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          tokenA={{
+            symbol: tokenA.symbol,
+            logoURI: tokenA.logoURI,
+            amount: amountA,
+          }}
+          tokenB={{
+            symbol: tokenB.symbol,
+            logoURI: tokenB.logoURI,
+            amount: amountB,
+          }}
+          rate={swapRate}
+          confirmSwap={confirmSwap}
+        />
       </div>
     </div>
   );
