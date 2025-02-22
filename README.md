@@ -4,12 +4,12 @@ BTSwap is a cutting-edge decentralized exchange (DEX) built on the principles of
 
 ## 📽️ Demo Video
 
-[![BTSwap Demo]](https://www.loom.com/share/df83dfb0258643b898e46c6ab5f35b6f?sid=901e6473-ac3b-4293-941e-3099bdf30130)
+🔗 [![BTSwap Demo]](https://www.loom.com/share/df83dfb0258643b898e46c6ab5f35b6f?sid=901e6473-ac3b-4293-941e-3099bdf30130)
 
-🔗 Watch the Full Demo
-
-[![Watch the video](https://i.sstatic.net/Vp2cE.png)](https://youtu.be/vt5fpE0bzSY)
-[![Watch the video](https://i.sstatic.net/Vp2cE.png)](https://www.loom.com/share/df83dfb0258643b898e46c6ab5f35b6f?sid=901e6473-ac3b-4293-941e-3099bdf30130)
+<video width="600" controls>
+  <source src="baseVideo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## 🛠️ Recent Changes
 
